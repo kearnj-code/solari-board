@@ -3,7 +3,7 @@
    Split-flap electromechanical display aesthetic
 ───────────────────────────────────────────────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&display=swap');
 
 /* ── Reset & base ─────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,7 +27,7 @@
   --muted:       #555;
   --header-bg:   #161616;
   --shadow:      0 4px 24px rgba(0,0,0,0.8);
-  --font:        'Share Tech Mono', 'Courier New', monospace;
+  --font:        'Oswald', 'Arial Narrow', sans-serif;
 }
 
 html, body {
@@ -57,7 +57,7 @@ body::after {
 
 /* ── Board wrap ───────────────────────────────────────────────────────────── */
 .board-wrap {
-  max-width: 960px;
+  max-width: 1120px;
   margin: 24px auto;
   background: var(--board-bg);
   border: 2px solid #2a2a2a;
@@ -91,7 +91,7 @@ body::after {
   display: flex;
   align-items: center;
   gap: 14px;
-  font-size: 11px;
+  font-size: 13px;
   color: var(--amber-dim);
   letter-spacing: 0.12em;
 }
@@ -99,12 +99,13 @@ body::after {
 .meta-label {
   color: var(--green);
   letter-spacing: 0.2em;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .clock {
   color: var(--amber);
   letter-spacing: 0.1em;
+  font-size: 14px;
 }
 
 .refresh-indicator {
@@ -130,11 +131,11 @@ body::after {
 /* ── Column labels ────────────────────────────────────────────────────────── */
 .column-labels {
   display: grid;
-  grid-template-columns: 30px 1fr 56px 24px 56px 1fr 30px 110px;
-  gap: 6px;
-  padding: 6px 8px;
-  font-size: 9px;
-  letter-spacing: 0.18em;
+  grid-template-columns: 36px 1fr 96px 30px 96px 1fr 36px 140px;
+  gap: 8px;
+  padding: 7px 12px;
+  font-size: 11px;
+  letter-spacing: 0.2em;
   color: var(--muted);
   border-top: 1px solid #1e1e1e;
 }
@@ -145,10 +146,10 @@ body::after {
 
 /* ── Main board ───────────────────────────────────────────────────────────── */
 .board {
-  padding: 8px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   min-height: 200px;
 }
 
@@ -186,10 +187,10 @@ body::after {
 /* ── Game row ─────────────────────────────────────────────────────────────── */
 .game-row {
   display: grid;
-  grid-template-columns: 30px 1fr 56px 24px 56px 1fr 30px 110px;
-  gap: 6px;
+  grid-template-columns: 36px 1fr 96px 30px 96px 1fr 36px 140px;
+  gap: 8px;
   align-items: center;
-  padding: 5px 8px;
+  padding: 7px 12px;
   background: var(--flap-bg);
   border: 1px solid var(--flap-border);
   border-radius: 3px;
@@ -231,13 +232,13 @@ body::after {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 30px;
+  width: 28px;
+  height: 42px;
   background: var(--flap-dark);
-  border: 1px solid #222;
+  border: 1px solid #2a2a2a;
   border-radius: 2px;
-  font-size: 15px;
-  font-weight: bold;
+  font-size: 22px;
+  font-weight: 700;
   letter-spacing: 0;
   color: var(--amber);
   position: relative;
@@ -245,7 +246,7 @@ body::after {
   flex-shrink: 0;
   user-select: none;
   /* Inner shadow to simulate the card in the flap */
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), inset 0 -1px 0 rgba(0,0,0,0.4);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -1px 0 rgba(0,0,0,0.5);
   overflow: hidden;
 }
 
@@ -256,15 +257,15 @@ body::after {
   left: 0; right: 0;
   top: 50%;
   height: 1px;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.75);
   pointer-events: none;
 }
 
 .flap-char.header-char {
-  width: 26px;
-  height: 36px;
-  font-size: 20px;
-  border-color: #2e2e2e;
+  width: 32px;
+  height: 48px;
+  font-size: 28px;
+  border-color: #303030;
 }
 
 .flap-char.header-space {
@@ -297,7 +298,7 @@ body::after {
 .score-cell {
   display: flex;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
 }
 
 .score-cell.leading .flap-char {
@@ -320,7 +321,7 @@ body::after {
 
 .team-abbr {
   display: flex;
-  gap: 2px;
+  gap: 3px;
 }
 
 /* ── Rank cell ────────────────────────────────────────────────────────────── */
@@ -333,12 +334,13 @@ body::after {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
-  background: #1e1e1e;
-  border: 1px solid #2a2a2a;
+  width: 28px;
+  height: 28px;
+  background: #1a1e24;
+  border: 1px solid #283040;
   border-radius: 2px;
-  font-size: 10px;
+  font-size: 13px;
+  font-weight: 700;
   color: var(--blue);
   letter-spacing: 0;
 }
@@ -360,9 +362,10 @@ body::after {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  font-size: 10px;
+  width: 26px;
+  height: 26px;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--muted);
   letter-spacing: 0;
 }
@@ -381,13 +384,14 @@ body::after {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 22px;
-  padding: 0 5px;
+  height: 30px;
+  padding: 0 8px;
   background: var(--flap-dark);
-  border: 1px solid #222;
+  border: 1px solid #2a2a2a;
   border-radius: 2px;
-  font-size: 10px;
-  letter-spacing: 0.08em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -419,7 +423,7 @@ body::after {
   color: var(--amber-dim);
   background: #161200;
   border-color: #2a2200;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 /* ── No games message ────────────────────────────────────────────────────── */
@@ -458,8 +462,9 @@ body::after {
 }
 
 .section-label {
-  font-size: 9px;
-  letter-spacing: 0.25em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -474,38 +479,45 @@ body::after {
 .board-footer {
   background: var(--header-bg);
   border-top: 1px solid #1e1e1e;
-  padding: 8px 20px;
+  padding: 9px 20px;
   display: flex;
   justify-content: space-between;
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  color: #383838;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: #404040;
   flex-wrap: wrap;
   gap: 4px;
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
-@media (max-width: 640px) {
+@media (max-width: 860px) {
   .board-wrap { margin: 0; border-radius: 0; border-left: none; border-right: none; }
 
   .game-row,
   .column-labels {
-    grid-template-columns: 24px 1fr 48px 20px 48px 1fr 24px 88px;
-    gap: 4px;
+    grid-template-columns: 30px 1fr 78px 26px 78px 1fr 30px 118px;
+    gap: 6px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
-  .flap-char { width: 18px; height: 26px; font-size: 13px; }
-  .header-char { width: 20px; height: 28px; font-size: 16px; }
-  .status-flap { font-size: 9px; padding: 0 3px; }
-  .board-footer { justify-content: center; }
+  .flap-char        { width: 23px; height: 35px; font-size: 18px; }
+  .flap-char.header-char { width: 26px; height: 38px; font-size: 22px; }
+  .status-flap      { font-size: 11px; padding: 0 5px; height: 26px; }
+  .rank-flap        { width: 24px; height: 24px; font-size: 11px; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 560px) {
   .column-labels .col-rank,
   .game-row .rank-cell { display: none; }
 
   .game-row,
   .column-labels {
-    grid-template-columns: 1fr 48px 18px 48px 1fr 90px;
+    grid-template-columns: 1fr 72px 24px 72px 1fr 108px;
+    gap: 5px;
   }
+
+  .flap-char { width: 21px; height: 32px; font-size: 16px; }
+  .board-footer { justify-content: center; gap: 8px; }
 }
