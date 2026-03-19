@@ -491,6 +491,8 @@ body::after {
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
+
+/* ── Tablet (≤ 860px) ── tighten up but keep single-row layout ── */
 @media (max-width: 860px) {
   .board-wrap { margin: 0; border-radius: 0; border-left: none; border-right: none; }
 
@@ -502,22 +504,78 @@ body::after {
     padding-right: 8px;
   }
 
-  .flap-char        { width: 23px; height: 35px; font-size: 18px; }
+  .flap-char             { width: 23px; height: 35px; font-size: 18px; }
   .flap-char.header-char { width: 26px; height: 38px; font-size: 22px; }
-  .status-flap      { font-size: 11px; padding: 0 5px; height: 26px; }
-  .rank-flap        { width: 24px; height: 24px; font-size: 11px; }
+  .status-flap           { font-size: 11px; padding: 0 5px; height: 26px; }
+  .rank-flap             { width: 24px; height: 24px; font-size: 11px; }
 }
 
-@media (max-width: 560px) {
-  .column-labels .col-rank,
-  .game-row .rank-cell { display: none; }
+/* ── Phone (≤ 540px) ── 2-row card layout per game ── */
+@media (max-width: 540px) {
+  /* Header */
+  .board-header          { padding: 12px 10px 0; }
+  .header-flaps          { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .header-title          { gap: 2px; }
+  .flap-char.header-char { width: 17px; height: 26px; font-size: 16px; border-color: #2a2a2a; }
+  .header-meta           { font-size: 12px; gap: 10px; }
 
-  .game-row,
-  .column-labels {
-    grid-template-columns: 1fr 72px 24px 72px 1fr 108px;
-    gap: 5px;
+  /* Hide column labels — they don't map to the new 2-row layout */
+  .column-labels         { display: none; }
+
+  /* Board padding */
+  .board                 { padding: 6px; gap: 6px; }
+
+  /* ── Game row: 2-row card ──
+     Row 1:  away-team | away-score | @ | home-score | home-team
+     Row 2:  status (full width, centred)
+  ── */
+  .game-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto 1fr;
+    grid-template-rows: auto auto;
+    /* nth-child order: rank-away(1) team-away(2) score-away(3)
+                        divider(4) score-home(5) team-home(6)
+                        rank-home(7) status(8)               */
+    grid-template-areas:
+      "ta  sa  d  sh  th"
+      "st  st  st st  st";
+    gap: 0;
+    column-gap: 6px;
+    row-gap: 7px;
+    padding: 9px 10px 10px;
   }
 
-  .flap-char { width: 21px; height: 32px; font-size: 16px; }
-  .board-footer { justify-content: center; gap: 8px; }
+  /* Hide rank columns */
+  .game-row > :nth-child(1),
+  .game-row > :nth-child(7) { display: none; }
+
+  /* Assign grid areas by child position */
+  .game-row > :nth-child(2) { grid-area: ta; }
+  .game-row > :nth-child(3) { grid-area: sa; }
+  .game-row > :nth-child(4) { grid-area: d;  }
+  .game-row > :nth-child(5) { grid-area: sh; }
+  .game-row > :nth-child(6) { grid-area: th; }
+  .game-row > :nth-child(8) { grid-area: st; justify-content: center; }
+
+  /* Team cells: away left-aligned, home right-aligned */
+  .team-cell      { justify-content: flex-start; }
+  .team-cell.home { justify-content: flex-end; }
+
+  /* Score cells: stay centred */
+  .score-cell { justify-content: center; }
+
+  /* Row-midline crease makes no sense across 2 rows — suppress it */
+  .game-row::after { display: none; }
+
+  /* Flap char size */
+  .flap-char { width: 19px; height: 30px; font-size: 16px; }
+
+  /* Status badges */
+  .status-flap { height: 26px; font-size: 12px; padding: 0 7px; }
+
+  /* Divider */
+  .divider-flap { width: 20px; font-size: 13px; }
+
+  /* Footer */
+  .board-footer { justify-content: center; gap: 8px; font-size: 10px; }
 }
