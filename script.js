@@ -26,6 +26,7 @@ const FLAP_CHARS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.:-/@#&';
 /** Map of gameId → { awayScore, homeScore, status, period, clock } */
 const prevState = new Map();
 
+let latestGames    = [];
 let refreshTimer   = null;
 let countdownTimer = null;
 let countdownSecs  = REFRESH_MS / 1000;
@@ -355,6 +356,58 @@ function renderBoard(games) {
   }
 }
 
+// ─── Summary modal ────────────────────────────────────────────────────────────
+
+function buildSummaryRow(game) {
+  const awayScore = Number(game.awayScore);
+  const homeScore = Number(game.homeScore);
+  const awayWins  = !isNaN(awayScore) && !isNaN(homeScore) && awayScore > homeScore;
+  const homeWins  = !isNaN(awayScore) && !isNaN(homeScore) && homeScore > awayScore;
+
+  const row = document.createElement('div');
+  row.className = 'summary-row';
+
+  const awayEl = document.createElement('span');
+  awayEl.className = 'summary-team' + (awayWins ? ' winner' : '');
+  awayEl.textContent = (game.awayRank ? `(${game.awayRank}) ` : '') + game.awayAbbr.trim();
+
+  const scoreEl = document.createElement('span');
+  scoreEl.className = 'summary-score';
+  scoreEl.textContent = `${game.awayScore} – ${game.homeScore}`;
+
+  const homeEl = document.createElement('span');
+  homeEl.className = 'summary-team home' + (homeWins ? ' winner' : '');
+  homeEl.textContent = game.homeAbbr.trim() + (game.homeRank ? ` (${game.homeRank})` : '');
+
+  const statusEl = document.createElement('span');
+  statusEl.className = 'summary-status';
+  const extra = game.statusDesc?.replace('Final', '').replace('/', '').trim();
+  statusEl.textContent = extra || 'F';
+
+  row.appendChild(awayEl);
+  row.appendChild(scoreEl);
+  row.appendChild(homeEl);
+  row.appendChild(statusEl);
+  return row;
+}
+
+function openSummaryModal() {
+  const finals = latestGames.filter(g => g.isFinal);
+  const body   = document.getElementById('modal-body');
+  body.innerHTML = '';
+
+  if (!finals.length) {
+    const empty = document.createElement('div');
+    empty.className = 'modal-empty';
+    empty.textContent = 'NO FINAL GAMES YET';
+    body.appendChild(empty);
+  } else {
+    for (const game of finals) body.appendChild(buildSummaryRow(game));
+  }
+
+  document.getElementById('summary-modal').hidden = false;
+}
+
 function renderError(message) {
   const board = document.getElementById('board');
   board.innerHTML = '';
@@ -399,7 +452,16 @@ async function refresh() {
     const events = data.events ?? [];
     const games  = events.map(parseGame);
 
+    latestGames = games;
     renderBoard(games);
+
+    // Update results button
+    const finalCount = games.filter(g => g.isFinal).length;
+    const btn = document.getElementById('results-btn');
+    if (btn) {
+      btn.disabled = finalCount === 0;
+      btn.textContent = finalCount > 0 ? `RESULTS (${finalCount})` : 'RESULTS';
+    }
 
     // Persist state for next diff
     for (const g of games) {
@@ -427,6 +489,15 @@ async function refresh() {
   // Clock ticks every second
   updateClock();
   setInterval(updateClock, 1000);
+
+  // Modal controls
+  document.getElementById('results-btn').addEventListener('click', openSummaryModal);
+  document.getElementById('modal-close').addEventListener('click', () => {
+    document.getElementById('summary-modal').hidden = true;
+  });
+  document.getElementById('summary-modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.hidden = true;
+  });
 
   // Initial fetch
   refresh();

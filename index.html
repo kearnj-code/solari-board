@@ -10,28 +10,7 @@
   <div class="board-wrap">
     <header class="board-header">
       <div class="header-flaps">
-        <div class="header-title">
-          <span class="flap-char header-char" data-char="N">N</span>
-          <span class="flap-char header-char" data-char="C">C</span>
-          <span class="flap-char header-char" data-char="A">A</span>
-          <span class="flap-char header-char" data-char="A">A</span>
-          <span class="flap-char header-char header-space"> </span>
-          <span class="flap-char header-char" data-char="B">B</span>
-          <span class="flap-char header-char" data-char="A">A</span>
-          <span class="flap-char header-char" data-char="S">S</span>
-          <span class="flap-char header-char" data-char="K">K</span>
-          <span class="flap-char header-char" data-char="E">E</span>
-          <span class="flap-char header-char" data-char="T">T</span>
-          <span class="flap-char header-char" data-char="B">B</span>
-          <span class="flap-char header-char" data-char="A">A</span>
-          <span class="flap-char header-char" data-char="L">L</span>
-          <span class="flap-char header-char" data-char="L">L</span>
-          <span class="flap-char header-char header-space"> </span>
-          <span class="flap-char header-char" data-char="2">2</span>
-          <span class="flap-char header-char" data-char="0">0</span>
-          <span class="flap-char header-char" data-char="2">2</span>
-          <span class="flap-char header-char" data-char="6">6</span>
-        </div>
+        <div class="header-title">NCAA BASKETBALL 2026</div>
         <div class="header-meta">
           <span class="meta-label">LIVE SCORES</span>
           <span class="clock" id="clock"></span>
@@ -39,6 +18,7 @@
             <span class="refresh-dot"></span>
             <span id="refresh-countdown">30</span>s
           </span>
+          <button class="results-btn" id="results-btn" disabled>RESULTS</button>
         </div>
       </div>
       <div class="column-labels">
@@ -75,6 +55,16 @@
       <span>REFRESHES EVERY 30 SECONDS</span>
       <span>MEN&apos;S&nbsp;NCAA&nbsp;BASKETBALL</span>
     </footer>
+  </div>
+
+  <div class="modal-overlay" id="summary-modal" hidden>
+    <div class="modal-panel">
+      <div class="modal-header">
+        <span class="modal-title">FINAL SCORES</span>
+        <button class="modal-close" id="modal-close">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
   </div>
 
   <script src="script.js"></script>
