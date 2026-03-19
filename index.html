@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NCAA Basketball 2026 — Solari Board</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="board-wrap">
+    <header class="board-header">
+      <div class="header-flaps">
+        <div class="header-title">
+          <span class="flap-char header-char" data-char="N">N</span>
+          <span class="flap-char header-char" data-char="C">C</span>
+          <span class="flap-char header-char" data-char="A">A</span>
+          <span class="flap-char header-char" data-char="A">A</span>
+          <span class="flap-char header-char header-space"> </span>
+          <span class="flap-char header-char" data-char="B">B</span>
+          <span class="flap-char header-char" data-char="A">A</span>
+          <span class="flap-char header-char" data-char="S">S</span>
+          <span class="flap-char header-char" data-char="K">K</span>
+          <span class="flap-char header-char" data-char="E">E</span>
+          <span class="flap-char header-char" data-char="T">T</span>
+          <span class="flap-char header-char" data-char="B">B</span>
+          <span class="flap-char header-char" data-char="A">A</span>
+          <span class="flap-char header-char" data-char="L">L</span>
+          <span class="flap-char header-char" data-char="L">L</span>
+          <span class="flap-char header-char header-space"> </span>
+          <span class="flap-char header-char" data-char="2">2</span>
+          <span class="flap-char header-char" data-char="0">0</span>
+          <span class="flap-char header-char" data-char="2">2</span>
+          <span class="flap-char header-char" data-char="6">6</span>
+        </div>
+        <div class="header-meta">
+          <span class="meta-label">LIVE SCORES</span>
+          <span class="clock" id="clock"></span>
+          <span class="refresh-indicator" id="refresh-indicator" title="Next refresh countdown">
+            <span class="refresh-dot"></span>
+            <span id="refresh-countdown">30</span>s
+          </span>
+        </div>
+      </div>
+      <div class="column-labels">
+        <span class="col-rank">RK</span>
+        <span class="col-team">AWAY</span>
+        <span class="col-score">PTS</span>
+        <span class="col-divider"></span>
+        <span class="col-score">PTS</span>
+        <span class="col-team">HOME</span>
+        <span class="col-rank">RK</span>
+        <span class="col-status">STATUS</span>
+      </div>
+    </header>
+
+    <main class="board" id="board">
+      <div class="loading-row" id="loading">
+        <div class="loading-flaps">
+          <span class="flap-char loading-char">L</span>
+          <span class="flap-char loading-char">O</span>
+          <span class="flap-char loading-char">A</span>
+          <span class="flap-char loading-char">D</span>
+          <span class="flap-char loading-char">I</span>
+          <span class="flap-char loading-char">N</span>
+          <span class="flap-char loading-char">G</span>
+          <span class="flap-char loading-char">.</span>
+          <span class="flap-char loading-char">.</span>
+          <span class="flap-char loading-char">.</span>
+        </div>
+      </div>
+    </main>
+
+    <footer class="board-footer">
+      <span>DATA&nbsp;·&nbsp;ESPN SCOREBOARD API</span>
+      <span>REFRESHES EVERY 30 SECONDS</span>
+      <span>MEN&apos;S&nbsp;NCAA&nbsp;BASKETBALL</span>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

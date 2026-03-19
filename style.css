@@ -1,0 +1,511 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   SOLARI BOARD — NCAA Basketball 2026
+   Split-flap electromechanical display aesthetic
+───────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Hardware palette */
+  --bg:          #0d0d0d;
+  --board-bg:    #111111;
+  --flap-bg:     #1c1c1c;
+  --flap-dark:   #141414;
+  --flap-border: #2a2a2a;
+  --flap-crease: #0a0a0a;
+  --amber:       #ffb347;
+  --amber-bright:#ffd07a;
+  --amber-dim:   #b37420;
+  --amber-glow:  rgba(255,179,71,0.15);
+  --red:         #ff4f4f;
+  --green:       #4fff8f;
+  --blue:        #4fb3ff;
+  --white:       #e8e0d0;
+  --muted:       #555;
+  --header-bg:   #161616;
+  --shadow:      0 4px 24px rgba(0,0,0,0.8);
+  --font:        'Share Tech Mono', 'Courier New', monospace;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--amber);
+  font-family: var(--font);
+  font-size: 14px;
+  overflow-x: hidden;
+}
+
+/* Subtle scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.04) 2px,
+    rgba(0,0,0,0.04) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Board wrap ───────────────────────────────────────────────────────────── */
+.board-wrap {
+  max-width: 960px;
+  margin: 24px auto;
+  background: var(--board-bg);
+  border: 2px solid #2a2a2a;
+  border-radius: 6px;
+  box-shadow: var(--shadow), 0 0 60px rgba(255,179,71,0.06);
+  overflow: hidden;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+.board-header {
+  background: var(--header-bg);
+  border-bottom: 2px solid #252525;
+  padding: 16px 20px 0;
+}
+
+.header-flaps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.header-title {
+  display: flex;
+  gap: 3px;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 11px;
+  color: var(--amber-dim);
+  letter-spacing: 0.12em;
+}
+
+.meta-label {
+  color: var(--green);
+  letter-spacing: 0.2em;
+  font-size: 10px;
+}
+
+.clock {
+  color: var(--amber);
+  letter-spacing: 0.1em;
+}
+
+.refresh-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+}
+
+.refresh-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--green); }
+  50%       { opacity: 0.3; box-shadow: none; }
+}
+
+/* ── Column labels ────────────────────────────────────────────────────────── */
+.column-labels {
+  display: grid;
+  grid-template-columns: 30px 1fr 56px 24px 56px 1fr 30px 110px;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  border-top: 1px solid #1e1e1e;
+}
+
+.column-labels span { text-align: center; }
+.col-team { text-align: left !important; padding-left: 4px; }
+.col-team:last-of-type { text-align: right !important; padding-right: 4px; }
+
+/* ── Main board ───────────────────────────────────────────────────────────── */
+.board {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 200px;
+}
+
+/* ── Loading row ──────────────────────────────────────────────────────────── */
+.loading-row {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.loading-flaps {
+  display: flex;
+  gap: 3px;
+}
+
+.loading-char {
+  animation: loading-flip 1s ease-in-out infinite;
+}
+
+.loading-char:nth-child(2)  { animation-delay: 0.07s; }
+.loading-char:nth-child(3)  { animation-delay: 0.14s; }
+.loading-char:nth-child(4)  { animation-delay: 0.21s; }
+.loading-char:nth-child(5)  { animation-delay: 0.28s; }
+.loading-char:nth-child(6)  { animation-delay: 0.35s; }
+.loading-char:nth-child(7)  { animation-delay: 0.42s; }
+.loading-char:nth-child(8)  { animation-delay: 0.49s; }
+.loading-char:nth-child(9)  { animation-delay: 0.56s; }
+.loading-char:nth-child(10) { animation-delay: 0.63s; }
+
+@keyframes loading-flip {
+  0%, 100% { opacity: 1; transform: rotateX(0deg); }
+  50%       { opacity: 0.2; transform: rotateX(90deg); }
+}
+
+/* ── Game row ─────────────────────────────────────────────────────────────── */
+.game-row {
+  display: grid;
+  grid-template-columns: 30px 1fr 56px 24px 56px 1fr 30px 110px;
+  gap: 6px;
+  align-items: center;
+  padding: 5px 8px;
+  background: var(--flap-bg);
+  border: 1px solid var(--flap-border);
+  border-radius: 3px;
+  position: relative;
+  transition: background 0.3s;
+}
+
+/* Horizontal crease — the split-flap midline */
+.game-row::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--flap-crease);
+  pointer-events: none;
+}
+
+.game-row.live {
+  border-color: #2e2a1a;
+  background: #1a1800;
+}
+
+.game-row.live::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  box-shadow: inset 0 0 12px rgba(255,179,71,0.05);
+  pointer-events: none;
+}
+
+.game-row.final {
+  opacity: 0.65;
+}
+
+/* ── Flap character cell ──────────────────────────────────────────────────── */
+.flap-char {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 30px;
+  background: var(--flap-dark);
+  border: 1px solid #222;
+  border-radius: 2px;
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 0;
+  color: var(--amber);
+  position: relative;
+  perspective: 200px;
+  flex-shrink: 0;
+  user-select: none;
+  /* Inner shadow to simulate the card in the flap */
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), inset 0 -1px 0 rgba(0,0,0,0.4);
+  overflow: hidden;
+}
+
+/* The crease line across the center of each character cell */
+.flap-char::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(0,0,0,0.7);
+  pointer-events: none;
+}
+
+.flap-char.header-char {
+  width: 26px;
+  height: 36px;
+  font-size: 20px;
+  border-color: #2e2e2e;
+}
+
+.flap-char.header-space {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.flap-char.header-space::after { display: none; }
+
+/* ── Flip animation ───────────────────────────────────────────────────────── */
+.flap-char.flipping {
+  animation: flip-char 0.18s ease-in-out;
+}
+
+@keyframes flip-char {
+  0%   { transform: rotateX(0deg);   filter: brightness(1); }
+  40%  { transform: rotateX(90deg);  filter: brightness(0.2); }
+  60%  { transform: rotateX(-90deg); filter: brightness(0.2); }
+  100% { transform: rotateX(0deg);   filter: brightness(1); }
+}
+
+/* Cascade stagger for multiple chars changing at once */
+.flap-char.flip-1 { animation-delay: 0.00s; }
+.flap-char.flip-2 { animation-delay: 0.04s; }
+.flap-char.flip-3 { animation-delay: 0.08s; }
+.flap-char.flip-4 { animation-delay: 0.12s; }
+
+/* ── Score display ────────────────────────────────────────────────────────── */
+.score-cell {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+}
+
+.score-cell.leading .flap-char {
+  color: var(--amber-bright);
+  background: #221800;
+  border-color: #3a2800;
+  box-shadow: inset 0 1px 0 rgba(255,200,80,0.08), inset 0 -1px 0 rgba(0,0,0,0.5),
+              0 0 6px rgba(255,179,71,0.15);
+}
+
+/* ── Team name ────────────────────────────────────────────────────────────── */
+.team-cell {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.team-cell.home { justify-content: flex-end; }
+
+.team-abbr {
+  display: flex;
+  gap: 2px;
+}
+
+/* ── Rank cell ────────────────────────────────────────────────────────────── */
+.rank-cell {
+  display: flex;
+  justify-content: center;
+}
+
+.rank-flap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: #1e1e1e;
+  border: 1px solid #2a2a2a;
+  border-radius: 2px;
+  font-size: 10px;
+  color: var(--blue);
+  letter-spacing: 0;
+}
+
+.rank-flap.empty {
+  color: transparent;
+  background: transparent;
+  border-color: transparent;
+}
+
+/* ── Divider (vs / @) ────────────────────────────────────────────────────── */
+.divider-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.divider-flap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+
+/* ── Status cell ──────────────────────────────────────────────────────────── */
+.status-cell {
+  display: flex;
+  gap: 2px;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.status-flap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  padding: 0 5px;
+  background: var(--flap-dark);
+  border: 1px solid #222;
+  border-radius: 2px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.status-flap.live-badge {
+  color: var(--red);
+  background: #1a0000;
+  border-color: #3a0000;
+  animation: live-blink 1.4s ease-in-out infinite;
+}
+
+@keyframes live-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+.status-flap.final-badge {
+  color: var(--muted);
+  background: #161616;
+}
+
+.status-flap.scheduled-badge {
+  color: #4a6a8a;
+  background: #0e1218;
+  border-color: #1a2530;
+}
+
+.status-flap.period-badge {
+  color: var(--amber-dim);
+  background: #161200;
+  border-color: #2a2200;
+  font-size: 9px;
+}
+
+/* ── No games message ────────────────────────────────────────────────────── */
+.no-games-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  gap: 3px;
+}
+
+.no-games-row .flap-char {
+  color: var(--muted);
+}
+
+/* ── Error row ────────────────────────────────────────────────────────────── */
+.error-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  gap: 10px;
+  color: var(--red);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  opacity: 0.8;
+}
+
+/* ── Section divider ──────────────────────────────────────────────────────── */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 2px;
+}
+
+.section-label {
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: #202020;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.board-footer {
+  background: var(--header-bg);
+  border-top: 1px solid #1e1e1e;
+  padding: 8px 20px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: #383838;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .board-wrap { margin: 0; border-radius: 0; border-left: none; border-right: none; }
+
+  .game-row,
+  .column-labels {
+    grid-template-columns: 24px 1fr 48px 20px 48px 1fr 24px 88px;
+    gap: 4px;
+  }
+
+  .flap-char { width: 18px; height: 26px; font-size: 13px; }
+  .header-char { width: 20px; height: 28px; font-size: 16px; }
+  .status-flap { font-size: 9px; padding: 0 3px; }
+  .board-footer { justify-content: center; }
+}
+
+@media (max-width: 480px) {
+  .column-labels .col-rank,
+  .game-row .rank-cell { display: none; }
+
+  .game-row,
+  .column-labels {
+    grid-template-columns: 1fr 48px 18px 48px 1fr 90px;
+  }
+}
