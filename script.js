@@ -26,6 +26,9 @@ const FLAP_CHARS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.:-/@#&';
 /** Map of gameId → { awayScore, homeScore, status, period, clock } */
 const prevState = new Map();
 
+/** Persistent cache of final games — only grows, never cleared across refreshes */
+const finalGamesCache = new Map();
+
 let latestGames    = [];
 let refreshTimer   = null;
 let countdownTimer = null;
@@ -392,7 +395,7 @@ function buildSummaryRow(game) {
 }
 
 function openSummaryModal() {
-  const finals = latestGames.filter(g => g.isFinal);
+  const finals = [...finalGamesCache.values()];
   const body   = document.getElementById('modal-body');
   body.innerHTML = '';
 
@@ -455,8 +458,13 @@ async function refresh() {
     latestGames = games;
     renderBoard(games);
 
+    // Accumulate final games — never evict so results persist across refreshes
+    for (const g of games) {
+      if (g.isFinal) finalGamesCache.set(g.id, g);
+    }
+
     // Update results button
-    const finalCount = games.filter(g => g.isFinal).length;
+    const finalCount = finalGamesCache.size;
     const btn = document.getElementById('results-btn');
     if (btn) {
       btn.disabled = finalCount === 0;
