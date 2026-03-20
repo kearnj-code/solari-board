@@ -104,7 +104,8 @@ async function fetchScores() {
   const url = new URL(ESPN_API);
   // Force today's date in ESPN format
   const today = new Date();
-  const ymd = today.toISOString().slice(0, 10).replace(/-/g, '');
+  // Use local date — toISOString() returns UTC which is wrong for US timezones in the evening
+  const ymd = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
   url.searchParams.set('dates', ymd);
   url.searchParams.set('limit', '200');
 
@@ -395,6 +396,10 @@ function buildSummaryRow(game) {
 }
 
 function openSummaryModal() {
+  // Merge current response's finals into cache so today's games are always present
+  for (const g of latestGames) {
+    if (g.isFinal) finalGamesCache.set(g.id, g);
+  }
   const finals = [...finalGamesCache.values()];
   const body   = document.getElementById('modal-body');
   body.innerHTML = '';
