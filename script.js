@@ -30,8 +30,9 @@ const prevState = new Map();
 
 const FINALS_STORAGE_KEY = 'solari_finals';
 
-function todayKey() {
+function dateKey(offsetDays = 0) {
   const d = new Date();
+  if (offsetDays) d.setDate(d.getDate() + offsetDays);
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 }
 
@@ -40,8 +41,8 @@ function loadFinalsCache() {
     const raw = localStorage.getItem(FINALS_STORAGE_KEY);
     if (!raw) return new Map();
     const { date, entries } = JSON.parse(raw);
-    // Discard stale data from a previous calendar day
-    if (date !== todayKey()) return new Map();
+    // Accept cache written today or yesterday — discard anything older
+    if (date !== dateKey(0) && date !== dateKey(-1)) return new Map();
     return new Map(entries);
   } catch {
     return new Map();
@@ -131,12 +132,12 @@ function statusBadge(text, badgeClass) {
 
 // ─── Data fetching ────────────────────────────────────────────────────────────
 
-async function fetchScores() {
+async function fetchScores(dateOffset = 0) {
   const url = new URL(ESPN_API);
-  // Force today's date in ESPN format
-  const today = new Date();
   // Use local date — toISOString() returns UTC which is wrong for US timezones in the evening
-  const ymd = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+  const d = new Date();
+  if (dateOffset) d.setDate(d.getDate() + dateOffset);
+  const ymd = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
   url.searchParams.set('dates', ymd);
   url.searchParams.set('limit', '200');
 
@@ -502,12 +503,7 @@ async function refresh() {
     if (finalGamesCache.size !== sizeBefore) saveFinalsCache(finalGamesCache);
 
     // Update results button
-    const finalCount = finalGamesCache.size;
-    const btn = document.getElementById('results-btn');
-    if (btn) {
-      btn.disabled = finalCount === 0;
-      btn.textContent = finalCount > 0 ? `RESULTS (${finalCount})` : 'RESULTS';
-    }
+    updateResultsButton();
 
     // Persist state for next diff
     for (const g of games) {
@@ -529,6 +525,33 @@ async function refresh() {
   }
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function updateResultsButton() {
+  const count = finalGamesCache.size;
+  const btn = document.getElementById('results-btn');
+  if (!btn) return;
+  btn.disabled = count === 0;
+  btn.textContent = count > 0 ? `RESULTS (${count})` : 'RESULTS';
+}
+
+/** One-time fetch of a non-today date to seed the finals cache. */
+async function fetchAndCacheFinals(dateOffset) {
+  try {
+    const data   = await fetchScores(dateOffset);
+    const events = data.events ?? [];
+    const games  = events.map(parseGame);
+    const sizeBefore = finalGamesCache.size;
+    for (const g of games) {
+      if (g.isFinal) finalGamesCache.set(g.id, g);
+    }
+    if (finalGamesCache.size !== sizeBefore) {
+      saveFinalsCache(finalGamesCache);
+      updateResultsButton();
+    }
+  } catch { /* non-critical — ignore failures for supplemental date */ }
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 (function init() {
@@ -536,13 +559,8 @@ async function refresh() {
   updateClock();
   setInterval(updateClock, 1000);
 
-  // Restore results button state from localStorage immediately (before first fetch)
-  const btn = document.getElementById('results-btn');
-  const storedCount = finalGamesCache.size;
-  if (storedCount > 0) {
-    btn.disabled = false;
-    btn.textContent = `RESULTS (${storedCount})`;
-  }
+  // Restore results button immediately from localStorage (before first fetch)
+  updateResultsButton();
 
   // Modal controls
   document.getElementById('results-btn').addEventListener('click', openSummaryModal);
@@ -553,9 +571,10 @@ async function refresh() {
     if (e.target === e.currentTarget) e.currentTarget.hidden = true;
   });
 
-  // Initial fetch
-  refresh();
+  // Fetch yesterday's final games once so they appear in Results
+  fetchAndCacheFinals(-1);
 
-  // Periodic refresh
+  // Initial fetch (today) + periodic refresh
+  refresh();
   refreshTimer = setInterval(refresh, REFRESH_MS);
 })();
