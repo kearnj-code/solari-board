@@ -26,8 +26,39 @@ const FLAP_CHARS = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.:-/@#&';
 /** Map of gameId → { awayScore, homeScore, status, period, clock } */
 const prevState = new Map();
 
-/** Persistent cache of final games — only grows, never cleared across refreshes */
-const finalGamesCache = new Map();
+// ─── localStorage persistence for final games ─────────────────────────────────
+
+const FINALS_STORAGE_KEY = 'solari_finals';
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+function loadFinalsCache() {
+  try {
+    const raw = localStorage.getItem(FINALS_STORAGE_KEY);
+    if (!raw) return new Map();
+    const { date, entries } = JSON.parse(raw);
+    // Discard stale data from a previous calendar day
+    if (date !== todayKey()) return new Map();
+    return new Map(entries);
+  } catch {
+    return new Map();
+  }
+}
+
+function saveFinalsCache(cache) {
+  try {
+    localStorage.setItem(FINALS_STORAGE_KEY, JSON.stringify({
+      date: todayKey(),
+      entries: [...cache.entries()],
+    }));
+  } catch { /* storage unavailable or full */ }
+}
+
+/** Persistent cache of final games — survives page reloads within the same day */
+const finalGamesCache = loadFinalsCache();
 
 let latestGames    = [];
 let refreshTimer   = null;
@@ -463,10 +494,12 @@ async function refresh() {
     latestGames = games;
     renderBoard(games);
 
-    // Accumulate final games — never evict so results persist across refreshes
+    // Accumulate final games — never evict, persist to localStorage
+    const sizeBefore = finalGamesCache.size;
     for (const g of games) {
       if (g.isFinal) finalGamesCache.set(g.id, g);
     }
+    if (finalGamesCache.size !== sizeBefore) saveFinalsCache(finalGamesCache);
 
     // Update results button
     const finalCount = finalGamesCache.size;
@@ -502,6 +535,14 @@ async function refresh() {
   // Clock ticks every second
   updateClock();
   setInterval(updateClock, 1000);
+
+  // Restore results button state from localStorage immediately (before first fetch)
+  const btn = document.getElementById('results-btn');
+  const storedCount = finalGamesCache.size;
+  if (storedCount > 0) {
+    btn.disabled = false;
+    btn.textContent = `RESULTS (${storedCount})`;
+  }
 
   // Modal controls
   document.getElementById('results-btn').addEventListener('click', openSummaryModal);
